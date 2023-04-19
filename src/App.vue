@@ -1,18 +1,36 @@
 <template>
   <div id="app">
-    <div v-if="folders.length===0">
-      <p id="nothing">Задач нет</p>
-    </div>
-    <div id="folders" v-for="(folder) in folders"
-    :key=folder.id>
-      <div>
-        <button class="folderButton"></button>
+    
+    <!-- левая колонка с папками -->
+  <div id="left-column">
+      <div 
+        id="folders" 
+        v-for="(folder) in folders"
+        :key=folder.id
+      >
+      <!-- пишем что хотим видеть у каждой папки в циле, папки=кнопки -->
+        <div>
+          <button class="folderButton"></button>
+        </div>
       </div>
-      <button id="createFolderButton" @click="addFolder()">Create</button>
-      <div v-if="visibleForm===1">
-        <new-folder></new-folder>
+        <!-- кнопка добавления папки -->
+        <button id="createFolderButton" @click="addFolder()">Create</button>
+      
+      <!-- добавление кнопки -->
+          <new-folder v-if="visibleForm===1" @addFolder="addNewFolder" ></new-folder>
+  </div>
+<!-- правая колонка с задачами -->
+    <div id="right-column">
+      <div v-if="folders.length===0">
+        <p id="nothing">Задач нет</p>
       </div>
     </div>
+    
+    
+    
+  
+  
+  
   </div>
 </template>
 
@@ -46,6 +64,9 @@ export default {
   methods:{
     addFolder(){
       this.visibleForm = 1
+    },
+    addNewFolder(data){
+      console.log(data)
     }
   }
 }
@@ -72,5 +93,10 @@ export default {
   height:100px;
   display:flex;
  }
- 
+
+ #left-column{
+  width:100px;
+  
+ }
+
 </style>
