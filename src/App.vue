@@ -17,7 +17,8 @@
         <button id="createFolderButton" @click="addFolder()">Create</button>
       
       <!-- добавление кнопки -->
-          <new-folder v-if="visibleForm===1" @addFolder="addNewFolder" ></new-folder>
+          <new-folder v-if="visibleForm===1" @addFolder="addNewFolder" @closeForm="closeForm" ></new-folder>
+          
   </div>
 <!-- правая колонка с задачами -->
     <div id="right-column">
@@ -67,6 +68,11 @@ export default {
     },
     addNewFolder(data){
       console.log(data)
+      this.folders.push(data)
+      console.log(this.folders)
+    },
+    closeForm(){
+      this.visibleForm = 0
     }
   }
 }
