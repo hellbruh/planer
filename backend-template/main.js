@@ -95,7 +95,7 @@ fastify.post('/editfoldername', async function(request,reply) {
         message:'error'
     }
     try{
-        const result = await client.query(`update folders set "folderName" = '$2' where "id" = $1;,`, [request.body.id, request.body.name])
+        const result = await client.query(`update folders set "folderName" = $2 where "folderid" = $1;`, [request.body.id, request.body.name])
         console.log('new name')
         data.message = 'we have changed the name!'
     }
@@ -116,7 +116,7 @@ fastify.post('/editfoldercolor', async function(request,reply) {
         message:'error'
     }
     try{
-        const result = await client.query(`update folders set "folderColor" = '$2' where "id" = $1;,`, [request.body.id, request.body.color])
+        const result = await client.query(`update folders set "folderColor" = $2 where "folderid" = $1;`, [request.body.id, request.body.color])
         console.log('new color')
         data.message = 'we have changed the color!'
     }
@@ -137,7 +137,7 @@ fastify.post('/deletefolder', async function(request,reply) {
         message:'error'
     }
     try{
-        const result = await client.query(`delete from folders  where "id" = $1;,`, [request.body.id])
+        const result = await client.query(`delete from folders  where folderid = $1;`, [request.body.id])
         console.log('succesfully deleted')
         data. message = 'we have deleted it'
     }
@@ -171,18 +171,19 @@ fastify.get('/tasks', async function(request,reply) {
     reply.send(data)
 })
 
-//создание taska
-fastify.post('/createtask', async function(request,reply) {
+//создание taska 
+    fastify.post('/createtask', async function(request,reply) {
     const client = await pool.connect()
     // непосредственное подкллючение к бд
         let data = {
         message:'error'
     }
     try{
-        const result = await client.query(`insert into tasks ("taskText", "folderid") values ($1,$2)' returning "id",`, [request.body.name, request.body.folderid])
+        const result = await client.query(`insert into tasks ("taskText", "folderid") values ($1,$2) returning "taskid"`, [request.body.name, request.body.folderid])
         console.log(result)
         console.log('created a task')
-        data.message = 'we have created a task'
+        data.message = result.rows
+        data.y = 'we have created it'
     }
     catch(e){
         console.log(e)
@@ -193,7 +194,7 @@ fastify.post('/createtask', async function(request,reply) {
     reply.send(data)
 })
 
-//done task
+//done task AAAAAAAAAAAAAAAAA NE RABOTAET
 fastify.post('/taskdone', async function(request,reply) {
     const client = await pool.connect()
     // непосредственное подкллючение к бд
@@ -201,7 +202,10 @@ fastify.post('/taskdone', async function(request,reply) {
         message:'error'
     }
     try{
-        const result = await client.query(`update tasks set "isDone" = 'true' where "id" = $1;,`, [request.body.id])
+        if (request.body.done ==  'true'){
+        const result = await client.query(`update tasks set "isDone" = 'false' where "id" = $1;`, [request.body.id])}
+        if (request.body.done ==  'false'){
+            const result = await client.query(`update tasks set "isDone" = 'true' where "id" = $1;`, [request.body.id])}
         console.log(result)
         console.log('hooray, task is done')
         data.message = 'task is done!'
@@ -215,15 +219,15 @@ fastify.post('/taskdone', async function(request,reply) {
     reply.send(data)
 })
 
-//rename task
+//rename task NE RABOTAAET AAAAAAAAA
 fastify.post('/renametask', async function(request,reply) {
     const client = await pool.connect()
-    // непосредственное подкллючение к бд
+    // непосредственное подкллючение к 
         let data = {
         message:'error'
     }
     try{
-        const result = await client.query(`update tasks set "taskText" = $2 where "id" = $1;,`, [request.body.id, request.body.name])
+        const result = await client.query(`update tasks set "taskText" = $2 where "taskid" = $1;`, [request.body.id, request.body.name])
         console.log(result)
         vonsole.log('renamed a task')
         data.message = 'we have renamed a task'
@@ -246,7 +250,7 @@ fastify.post('/deletetask', async function(request,reply) {
     }
 
     try{
-        const result = await client.query(`delete from tasks  where "id" = $1;,`, [request.body.id])
+        const result = await client.query(`delete from tasks  where "taskid" = $1;`, [request.body.id])
         console.log(result)
         vonsole.log('deleted a task')
         data.message = 'we have deleted a task!'
