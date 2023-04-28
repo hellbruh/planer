@@ -1,33 +1,32 @@
 <template>
-  <div id="visibleForm">
-    <div class="crestik">
-        <span @click="closeForm" class="material-symbols-outlined">
-            close
-        </span>
+    <div id="visibleForm">
+        <div class="crestik">
+            <span @click="closeForm" class="material-symbols-outlined">
+                close
+            </span>
+        </div>
+        <h1 >Создать папку</h1>
+        <input v-model="folderName" style="box-sizing:border-box;" type="text" class="form-control" id="formGroupExampleInput" :placeholder="placeholder">
+        <div class="colors">
+            <div @click="chooseColor(1)" :class="{'activeColor': activeColor==1}" class="color" id="color1" >
+            </div>
+            <div @click="chooseColor(2)" :class="{'activeColor': activeColor==2}" class="color" id="color2" >
+            </div>
+            <div @click="chooseColor(3)" :class="{'activeColor': activeColor==3}" class="color" id="color3" >
+            </div>
+            <div @click="chooseColor(4)" :class="{'activeColor': activeColor==4}" class="color" id="color4" >
+            </div>
+            <div @click="chooseColor(5)" :class="{'activeColor': activeColor==5}" class="color" id="color5" >
+            </div>
+            <div @click="chooseColor(6)" :class="{'activeColor': activeColor==6}" class="color" id="color6" >
+            </div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; box-sizing:border-box;">
+            <button @click="addNewFolder"  id="saveFolder" class="btn btn-primary">
+                Сохранить
+            </button>
+        </div>
     </div>
-    <h1 >Создать папку</h1>
-      <input v-model="folderName" style="box-sizing:border-box;" type="text" class="form-control" id="formGroupExampleInput" :placeholder="placeholder">
-    <div class="colors">
-        <div @click="chooseColor(1)" :class="{'activeColor': activeColor==1}" class="color" id="color1" >
-        </div>
-        <div @click="chooseColor(2)" :class="{'activeColor': activeColor==2}" class="color" id="color2" >
-        </div>
-        <div @click="chooseColor(3)" :class="{'activeColor': activeColor==3}" class="color" id="color3" >
-        </div>
-        <div @click="chooseColor(4)" :class="{'activeColor': activeColor==4}" class="color" id="color4" >
-        </div>
-        <div @click="chooseColor(5)" :class="{'activeColor': activeColor==5}" class="color" id="color5" >
-        </div>
-        <div @click="chooseColor(6)" :class="{'activeColor': activeColor==6}" class="color" id="color6" >
-        </div>
-    </div>
-    <div style="display:flex; justify-content:flex-end; box-sizing:border-box;">
-    <button @click="addNewFolder"  id="saveFolder" class="btn btn-primary">
-        Сохранить
-    </button>
-    </div>
-  
-  </div>
 </template>
 
 <script>
@@ -40,16 +39,20 @@ data(){
             color:'er'
         },
         folderName: '',
-        activeColor:0,
+        activeColor:1,
         placeholder: 'Название папки'
     }
 },
 methods:{
+    closeForm(){
+        this.$emit('closeForm')
+    },
     addNewFolder(){
         if (this.folderName.length>0 && this.activeColor != 0){
         this.newFolder.name = this.folderName
         this.newFolder.color = this.activeColor
         this.$emit('addFolder', this.newFolder)
+        this.closeForm()
         }
         else{
             this.placeholder = 'Поле имя не должно быть пустым'
@@ -58,10 +61,8 @@ methods:{
     chooseColor(id){
         console.log(id);
         this.activeColor = id
-    },
-    closeForm(){
-        this.$emit('closeForm')
     }
+    
 }
 }
 </script>
