@@ -3,7 +3,7 @@
     <!-- левая колонка с папками -->
 	<div id="left-column">
 		<!-- кнопка для всех задач -->
-		<div class="folder">
+		<div v-if="folders.length!==0" class="folder">
 			<span class="material-symbols-outlined">
 				list
 			</span>			
@@ -39,7 +39,7 @@
   </div>
 <!-- правая колонка с задачами -->
     <div id="right-column">
-		<div v-if="folders.length===0">
+		<div v-if="tasks.length===0">
 			<p id="nothing">Задач нет</p>
 		</div>
     
@@ -59,15 +59,18 @@ export default {
   data(){
     return{
       folders:[
-		{
-			name:'h',
-			color:'1'
-		},
-		{
-			name:'rgefg',
-			color:'2'
-		}
+		// {
+		// 	name:'h',
+		// 	color:'1'
+		// },
+		// {
+		// 	name:'rgefg',
+		// 	color:'2'
+		// }
 		],
+    tasks:[
+
+    ],
       visibleForm:0,
     }
   },
@@ -102,7 +105,11 @@ export default {
  }
  #nothing{
 	font-family: 'Sofia Sans', sans-serif;
-	font-size:28px;
+	font-size:100px;
+  display: flex;
+  justify-content:center;
+  align-items:center;
+  color:#76767623
  }
  #createFolderButton{
 	width:100%;
@@ -114,6 +121,7 @@ export default {
 	font-weight:500;
 	justify-content:flex-start;
 	align-items:center;
+  margin-top:10px;
  }
 #createFolderButton:hover{
 	cursor:pointer;
@@ -124,7 +132,7 @@ export default {
 	height:100vh;
 	display:flex;
 	flex-direction:column;
-	align-items: center;
+	align-items: flex-start;
 	justify-content: center;
 	box-sizing: border-box;
 	padding-left:10px;
@@ -136,12 +144,13 @@ export default {
 	flex-direction: row;
 	height:40px;
 	width:100%;
-	font-size: 18px;
-	color: #000000;
+	font-size: 20px;
+	color: #000000a9;
 	font-family: 'Lato', sans-serif;
 	font-weight:500;
 	justify-content:flex-start;
 	align-items:center;
+  margin-top:8px;
  }
  .folder:hover{
 	cursor:pointer;
@@ -173,8 +182,13 @@ export default {
 #color6{
         background-color: rgb(197, 85, 160);
     }
-.folderName{
-	display:flex;
 
+#right-column{
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  width:100%;
+  height:100vh;
 }
+
 </style>

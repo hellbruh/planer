@@ -51,8 +51,10 @@ fastify.get('/folders', async function(request,reply) {
     const client = await pool.connect()
     // непосредственное подкллючение к бд
     const data = {
-        message:'error'
+        message:'error',
+        statusCode:400
     }
+    const urlName = '/folders'
     try{
         const folders = await client.query('select * from folders')
         console.log(folders.rows)
@@ -63,6 +65,7 @@ fastify.get('/folders', async function(request,reply) {
     }
     finally{
         client.release()
+        console.log(urlName, 'client Release()')
     }
     reply.send(data)
 })
@@ -158,7 +161,7 @@ fastify.get('/tasks', async function(request,reply) {
         message:'error'
     }
     try{
-        const tasks = await client.query('select * from tasks')
+        const tasks = await client.query('select * from tasks t left join folders f on t.folderid = f.folderid')
         console.log('!')
         data.message = tasks.rows
     }
@@ -202,10 +205,7 @@ fastify.post('/taskdone', async function(request,reply) {
         message:'error'
     }
     try{
-        if (request.body.done ==  'true'){
-        const result = await client.query(`update tasks set "isDone" = 'false' where "id" = $1;`, [request.body.id])}
-        if (request.body.done ==  'false'){
-            const result = await client.query(`update tasks set "isDone" = 'true' where "id" = $1;`, [request.body.id])}
+        const result = await client.query(`update tasks set "isDone" = $2 where "taskid" = $1;`, [request.body.id, !request.body.done])
         console.log(result)
         console.log('hooray, task is done')
         data.message = 'task is done!'
@@ -229,7 +229,7 @@ fastify.post('/renametask', async function(request,reply) {
     try{
         const result = await client.query(`update tasks set "taskText" = $2 where "taskid" = $1;`, [request.body.id, request.body.name])
         console.log(result)
-        vonsole.log('renamed a task')
+        console.log('renamed a task')
         data.message = 'we have renamed a task'
     }
     catch(e){
@@ -252,8 +252,27 @@ fastify.post('/deletetask', async function(request,reply) {
     try{
         const result = await client.query(`delete from tasks  where "taskid" = $1;`, [request.body.id])
         console.log(result)
-        vonsole.log('deleted a task')
+        console.log('deleted a task')
         data.message = 'we have deleted a task!'
+    }
+    catch(e){
+        console.log(e)
+    }
+    finally{
+        client.release()
+    }
+    reply.send(data)
+})
+
+fastify.post('/folder', async function(request,reply) {
+    const client = await pool.connect()
+    // непосредственное подкллючение к бд
+        let data = {
+        message:'error'
+    }
+    try{
+        const tasks = await client.query('select "folderColor", "folderName", "taskText","taskid", f."folderid" from tasks t left join folders f on t.folderid = f.folderid where t.folderid = $1',[request.body.folderid])
+        data.message = tasks.rows
     }
     catch(e){
         console.log(e)
