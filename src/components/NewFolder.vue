@@ -79,6 +79,7 @@ methods:{
     border-radius: 10px;
     padding-left:10px; padding-right:10px; padding-top:15px; 
     box-sizing: border-box;
+    background-color: white;
     }
     .colors{
         display:flex;
@@ -100,22 +101,22 @@ methods:{
         border:2px solid rgb(77, 39, 39);
     }
     #color1{
-        background-color: rgb(197, 162, 142);
+        background-color: rgb(247, 223, 208);
     }
     #color2{
-        background-color: rgb(170, 113, 113);
+        background-color: rgb(209, 112, 112);
     }
     #color3{
-        background-color: rgb(103, 128, 89);
+        background-color: rgb(131, 170, 109);
     }
     #color4{
-        background-color: rgb(68, 111, 112);
+        background-color: rgb(102, 174, 175);
     }
     #color5{
-        background-color: rgb(111, 89, 126);
+        background-color: rgb(174, 138, 199);
     }
     #color6{
-        background-color: rgb(138, 70, 115);
+        background-color: rgb(197, 85, 160);
     }
 
     .activeColor{
@@ -125,8 +126,10 @@ methods:{
     #saveFolder{
         display:flex;
         margin-right:10px;
-        background-color:rgb(40, 117, 165);
-        border: 3px solid rgb(40, 117, 165)
+        background-color:rgb(87, 190, 255);
+        border: 0px solid rgb(0, 0, 0);
+        width:100%;
+        margin-left:10px;
         
     }
     .crestik{

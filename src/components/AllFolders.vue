@@ -6,6 +6,15 @@
 
 <script>
 export default {
+  name: 'AllFolders',
+  data(){
+    return{
+      
+    }
+  },
+  methods: {
+
+  }
 
 }
 </script>
