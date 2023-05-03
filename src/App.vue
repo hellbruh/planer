@@ -17,10 +17,10 @@
 		>
 		<!-- пишем что хотим видеть у каждой папки в циле, папки=кнопки -->
 			<div class="folder">
-				<div class="round" v-bind:id="'color'+folder.color">
+				<div class="round" v-bind:id="'color'+folder.folderColor">
 				</div>
 				<div class="folderName">
-					{{folder.name}}
+					{{folder.folderName}}
 				</div>
 			</div>
 		
@@ -49,7 +49,7 @@
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
+import axios from 'axios'
 import NewFolder from './components/NewFolder.vue'
 export default {
   name: 'App',
@@ -78,14 +78,40 @@ export default {
     addFolder(){
 		this.visibleForm = 1
     },
-    addNewFolder(data){
+    async addNewFolder(data){
 		console.log(data)
-		this.folders.push(data)
 		console.log(this.folders)
+		let request = {
+			name: data.name,
+			color: data.color
+		}
+		try{
+			const response = await axios.post('http://127.0.0.1:3000/createfolder', request)
+			this.folders.push({
+				...data,
+				id: response.data.message.folderid
+			})
+		}
+		catch(error){
+			console.error(error)
+		}
     },
     closeForm(){
 		this.visibleForm = 0
-    }
+    },
+	async getFolders(){
+		try{
+			let response = await axios.get('http://127.0.0.1:3000/folders')
+			console.log(response)
+			this.folders = response.data.message
+		}
+		catch(error){
+			console.error(error)
+		}
+	}
+  },
+  async created(){
+	await this.getFolders()
   }
 }
 </script>
@@ -128,16 +154,17 @@ export default {
  }
 
  #left-column{
-	width:200px;
+	width:250px;
 	height:100vh;
 	display:flex;
 	flex-direction:column;
 	align-items: flex-start;
-	justify-content: center;
+	justify-content: flex-start;
 	box-sizing: border-box;
-	padding-left:10px;
+	padding-left:25px;
 	padding-right:10px;
-	background-color:#F1F1F1;
+	background-color:#f6f6ff;
+	padding-top:100px;
  }
  .folder{
 	display:flex;
@@ -160,27 +187,27 @@ export default {
 	justify-content: center;
 	align-items: center;
     border-radius: 100%;
-	height:10px;
-	width:10px;
+	height:15px;
+	width:15px;
 	margin-right:10px;
     }
-#color1{
-        background-color: rgb(247, 223, 208);
+    #color1{
+        background-color: #C9D1D3;
     }
-#color2{
-        background-color: rgb(209, 112, 112);
+    #color2{
+        background-color: #FFBBCC;
     }
-#color3{
-        background-color: rgb(131, 170, 109);
+    #color3{
+        background-color: #B6E6BD;
     }
-#color4{
+    #color4{
         background-color: rgb(102, 174, 175);
     }
-#color5{
-        background-color: rgb(174, 138, 199);
+    #color5{
+        background-color: #e09cff;
     }
-#color6{
-        background-color: rgb(197, 85, 160);
+    #color6{
+        background-color: #64C4ED;
     }
 
 #right-column{

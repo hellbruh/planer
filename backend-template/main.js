@@ -80,7 +80,7 @@ fastify.post('/createfolder', async function(request,reply) {
     try{
         const result = await client.query(`insert into folders ("folderName", "folderColor") values ($1,$2) returning "folderid" `, [request.body.name, request.body.color])
         console.log(result)
-        data.message = result.rows
+        data.message = result.rows[0]
     }
     catch(e){
         console.log(e)

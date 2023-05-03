@@ -101,22 +101,22 @@ methods:{
         border:2px solid rgb(77, 39, 39);
     }
     #color1{
-        background-color: rgb(247, 223, 208);
+        background-color: #C9D1D3;
     }
     #color2{
-        background-color: rgb(209, 112, 112);
+        background-color: #FFBBCC;
     }
     #color3{
-        background-color: rgb(131, 170, 109);
+        background-color: #B6E6BD;
     }
     #color4{
         background-color: rgb(102, 174, 175);
     }
     #color5{
-        background-color: rgb(174, 138, 199);
+        background-color: #e09cff;
     }
     #color6{
-        background-color: rgb(197, 85, 160);
+        background-color: #64C4ED;
     }
 
     .activeColor{
