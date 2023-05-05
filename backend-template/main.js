@@ -197,7 +197,6 @@ fastify.get('/tasks', async function(request,reply) {
     reply.send(data)
 })
 
-//done task AAAAAAAAAAAAAAAAA NE RABOTAET
 fastify.post('/taskdone', async function(request,reply) {
     const client = await pool.connect()
     // непосредственное подкллючение к бд
@@ -219,7 +218,6 @@ fastify.post('/taskdone', async function(request,reply) {
     reply.send(data)
 })
 
-//rename task NE RABOTAAET AAAAAAAAA
 fastify.post('/renametask', async function(request,reply) {
     const client = await pool.connect()
     // непосредственное подкллючение к 
