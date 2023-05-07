@@ -52,7 +52,6 @@ fastify.get('/folders', async function(request,reply) {
     // непосредственное подкллючение к бд
     const data = {
         message:'error',
-        statusCode:400
     }
     const urlName = '/folders'
     try{
@@ -78,9 +77,14 @@ fastify.post('/createfolder', async function(request,reply) {
         message:'error'
     }
     try{
-        const result = await client.query(`insert into folders ("folderName", "folderColor") values ($1,$2) returning "folderid" `, [request.body.name, request.body.color])
-        console.log(result)
-        data.message = result.rows[0]
+        const result = await client.query(`insert into folders ("folderName", "folderColor") values ($1,$2) returning "folderid", "folderName", "folderColor" `, [request.body.name, request.body.color])
+        if (result.rowCount>0 && result.rows.length>0){
+            console.log(result)
+            data.message = result.rows[0]
+        }
+        else{
+            data.message = 'We didnt created some shit'
+        }
     }
     catch(e){
         console.log(e)
@@ -98,9 +102,14 @@ fastify.post('/editfoldername', async function(request,reply) {
         message:'error'
     }
     try{
-        const result = await client.query(`update folders set "folderName" = $2 where "folderid" = $1;`, [request.body.id, request.body.name])
-        console.log('new name')
-        data.message = 'we have changed the name!'
+        const result = await client.query(`update folders set "folderName" = $2 where "folderid" = $1 returning "folderid","folderName","folderColor"`, [request.body.id, request.body.name])
+        if (result.rowCount>0 && result.rows.length>0){
+            data.result = 'we have changed the name!'
+            data.message = result.rows
+        }
+        else{
+            data.message = 'We didnt renamed some shit'
+        }
     }
     catch(e){
         console.log(e)
@@ -119,9 +128,14 @@ fastify.post('/editfoldercolor', async function(request,reply) {
         message:'error'
     }
     try{
-        const result = await client.query(`update folders set "folderColor" = $2 where "folderid" = $1;`, [request.body.id, request.body.color])
-        console.log('new color')
-        data.message = 'we have changed the color!'
+        const result = await client.query(`update folders set "folderColor" = $2 where "folderid" = $1 returning "folderid","folderName","folderColor"`, [request.body.id, request.body.color])
+        if (result.rowCount>0 && result.rows.length>0){
+            data.result = 'we have changed the color!'
+            data.message = result.rows
+        }
+        else{
+            data.message = 'We didnt recolored some shit'
+        }
     }
     catch(e){
         console.log(e)
@@ -140,9 +154,9 @@ fastify.post('/deletefolder', async function(request,reply) {
         message:'error'
     }
     try{
-        const result = await client.query(`delete from folders  where folderid = $1;`, [request.body.id])
+        const result = await client.query(`delete from folders  where folderid = $1 order by folderid desc`, [request.body.id])
         console.log('succesfully deleted')
-        data. message = 'we have deleted it'
+        data. result = 'we have deleted it'
     }
     catch(e){
         console.log(e)
@@ -182,11 +196,14 @@ fastify.get('/tasks', async function(request,reply) {
         message:'error'
     }
     try{
-        const result = await client.query(`insert into tasks ("taskText", "folderid") values ($1,$2) returning "taskid"`, [request.body.name, request.body.folderid])
-        console.log(result)
-        console.log('created a task')
+        const result = await client.query(`insert into tasks ("taskText", "folderid") values ($1,$2) returning "taskid","folderid"`, [request.body.name, request.body.folderid])
+        if (result.rowCount>0 && result.rows.length>0){
         data.message = result.rows
         data.y = 'we have created it'
+            }
+        else{
+            data.message = 'We didnt created some shit'
+            }
     }
     catch(e){
         console.log(e)
@@ -197,17 +214,28 @@ fastify.get('/tasks', async function(request,reply) {
     reply.send(data)
 })
 
-fastify.post('/taskdone', async function(request,reply) {
+fastify.post('/dotasks', async function(request,reply) {
     const client = await pool.connect()
     // непосредственное подкллючение к бд
-        let data = {
+    let data = {
         message:'error'
     }
     try{
-        const result = await client.query(`update tasks set "isDone" = $2 where "taskid" = $1;`, [request.body.id, !request.body.done])
-        console.log(result)
-        console.log('hooray, task is done')
-        data.message = 'task is done!'
+        const tasks = await client.query('select "isDone" from tasks  where "taskid" = $1', [request.body.id])
+        if(tasks.rows.length > 0){
+            const result = await client.query(`update tasks set "isDone" = $2 where "taskid" = $1 returning "taskid","isDone","folderid","taskText"`, [request.body.id,!tasks.rows[0].isDone])
+            if (result.rowCount>0){
+                data.message = {
+                    success:true
+                }
+            }
+            else{
+                data.message = 'we was on finish but task isnt done'
+            }
+        }
+        else{
+            data.message = 'error we didnt do this task'
+        }
     }
     catch(e){
         console.log(e)
@@ -218,6 +246,8 @@ fastify.post('/taskdone', async function(request,reply) {
     reply.send(data)
 })
 
+
+//renme task
 fastify.post('/renametask', async function(request,reply) {
     const client = await pool.connect()
     // непосредственное подкллючение к 
@@ -226,9 +256,13 @@ fastify.post('/renametask', async function(request,reply) {
     }
     try{
         const result = await client.query(`update tasks set "taskText" = $2 where "taskid" = $1;`, [request.body.id, request.body.name])
-        console.log(result)
-        console.log('renamed a task')
-        data.message = 'we have renamed a task'
+        if (result.rowCount>0 && result.rows.length>0){
+            data.result = 'we have renamed a task'
+            data.message = result.rows
+        }
+        else{
+            data.message = 'We didnt renamed some shit'
+        }
     }
     catch(e){
         console.log(e)
@@ -269,7 +303,12 @@ fastify.post('/folder', async function(request,reply) {
         message:'error'
     }
     try{
-        const tasks = await client.query('select "folderColor", "folderName", "taskText","taskid", f."folderid" from tasks t left join folders f on t.folderid = f.folderid where t.folderid = $1',[request.body.folderid])
+        const tasks = await client.query(`select f."folderName", 
+                                                f."folderColor", 
+                                                t."taskText",
+                                                t."taskid", 
+                                                f."folderid" 
+                                                from tasks t left join folders f on t.folderid = f.folderid where t.folderid = $1`,[request.body.folderid])
         data.message = tasks.rows
     }
     catch(e){
