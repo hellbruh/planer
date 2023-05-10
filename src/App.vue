@@ -81,20 +81,29 @@ export default {
     async addNewFolder(data){
 		console.log(data)
 		console.log(this.folders)
+		
 		let request = {
 			name: data.name,
 			color: data.color
 		}
-		try{
-			const response = await axios.post('http://127.0.0.1:3000/createfolder', request)
-			this.folders.push({
-				...data,
-				id: response.data.message.folderid
-			})
-		}
-		catch(error){
-			console.error(error)
-		}
+		
+		//without server
+		this.folders.push({
+			folderName:request.name,
+			folderColor:request.color
+		})
+		
+		// with server
+		// try{
+		// 	const response = await axios.post('http://127.0.0.1:3000/createfolder', request)
+		// 	this.folders.push({
+		// 		...data,
+		// 		id: response.data.message.folderid
+		// 	})
+		// }
+		// catch(error){
+		// 	console.error(error)
+		// }
     },
     closeForm(){
 		this.visibleForm = 0
