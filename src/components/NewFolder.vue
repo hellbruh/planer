@@ -35,8 +35,8 @@ name:'NewFolder',
 data(){
     return{
         newFolder:{
-            name:'t',
-            color:'er'
+            folderName:'t',
+            folderColor:'er'
         },
         folderName: '',
         activeColor:1,
@@ -49,8 +49,8 @@ methods:{
     },
     addNewFolder(){
         if (this.folderName.length>0 && this.activeColor != 0){
-        this.newFolder.name = this.folderName
-        this.newFolder.color = this.activeColor
+        this.newFolder.folderName = this.folderName
+        this.newFolder.folderColor = this.activeColor
         this.$emit('addFolder', this.newFolder)
         this.closeForm()
         }
