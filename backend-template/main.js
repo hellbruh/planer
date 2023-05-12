@@ -2,6 +2,8 @@
 const fastify = require('fastify')({
     logger: true // Эта штука нужна, чтобы в терминале отображались логи запросов
 })
+const pdfMakePrinter = require('pdfmake/src/printer')
+
 const Pool = require('pg-pool')
 const pool = new Pool({
     database: 'postgres',
@@ -45,6 +47,16 @@ fastify.register(require('@fastify/cors'), (instance) => {
     }
 })
 
+
+
+const fonts = {
+    Roboto: {
+      normal: './fonts/Roboto-Black.ttf',
+      bold: './fonts/Roboto-Bold.ttf',
+      italics: './fonts/Roboto-Italic.ttf',
+    }
+}
+const pdfmake = require('pdfmake');
 
 //достаем папки
 fastify.get('/folders', async function(request,reply) {
@@ -322,19 +334,111 @@ fastify.post('/folder', async function(request,reply) {
 
 
 
+
+async function docFileFromStream(document) {
+    const chunks = [];
+    let result = null;
+    return new Promise(function (resolve, reject) {
+        try {
+            document.on('data', function (chunk) {
+                chunks.push(chunk);
+            });
+            document.on('end', async function () {
+                result = Buffer.concat(chunks);
+                console.log('end');
+                resolve(result);
+                
+            });
+            document.on('error', reject);
+            document.end();
+        } catch (error) {
+            console.log('docFileFromStream ERROR');
+            console.log(error);
+            reject(null);
+        }
+    });
+}
+
+
 // PDF
 fastify.post('/pdf', async function(request,reply) {
 
-    let data = {
-        message:'error'
-    }
     try{
-        
+        const printer = new pdfMakePrinter(fonts)
+        const docFile = printer.createPdfKitDocument({
+                content: [
+                    'First paragraph',
+                    'Another paragraph, this time a little bit longer to make sure, this line will be divided into at least two lines'
+                ]
+            })
+            const doc = await docFileFromStream(docFile)
+            reply.header('Content-type','application/pdf')
+            reply.send(doc)
     }
     catch(e){
         console.log(e)
     }
-    reply.send(data)
+
+})
+
+fastify.post('/taskspdf', async function(request,reply) {
+    const client = await pool.connect()
+    // непосредственное подкллючение к бд
+    const data = {
+        message:'error',
+    }
+    try{
+        const tasks = await client.query('select * from tasks')
+        console.log(tasks.rows)
+        data.message = tasks.rows
+        if (tasks.rowCount>0){
+            try{
+                let s=``
+                for ( const task of data.message){
+                    s+=`${task.taskText} \n`
+                }
+                const taskk=[]
+                for ( const task of data.message){
+                    taskk.push(task.taskText)
+                }
+                let erer=[...taskk]
+                console.log(1);
+                console.log(taskk);
+                const content = [
+                    {text: 'Unordered list', style: 'header'},
+		            {
+                        ul: taskk
+		            },
+                    
+                {text: '\n\nOrdered list', style: 'header'},
+                {
+                    ol: erer
+                }]
+                const printer = new pdfMakePrinter(fonts)
+                const docFile = printer.createPdfKitDocument({
+                content: content
+            })
+            const doc = await docFileFromStream(docFile)
+            reply.header('Content-type','application/pdf')
+            reply.send(doc)
+            }
+            catch(e){
+                console.log(e)
+                reply.send('failed 2nd by catch')
+            }
+        }
+        else{
+            reply.send('failed 2nd by else ')
+        }
+    }
+    catch(e){
+        console.log(e)
+        data.message = 'failed 1st'
+        readonly.send(data)
+    }
+    finally{
+        client.release()
+    }
 })
 
 // Создание маршрута для post запроса
