@@ -42,7 +42,7 @@
       
       <!-- добавление папки -->
         <new-folder v-if="visibleForm===1" @addFolder="addNewFolder" @closeForm="closeForm" ></new-folder>
-		<redaction v-if="functoolsForm===1" @closeFunctools="closeFunctools" :folderName="activeFolderName"></redaction>
+		<redaction v-if="functoolsForm===1" @closeFunctools="closeFunctools" :folderName="activeFolderName" @deleteFolder="deleteFolder"></redaction>
           
   </div>
 <!-- правая колонка с задачами -->
@@ -129,7 +129,12 @@ export default {
 	},
 	closeFunctools(){
 		this.functoolsForm = 0
-	}
+	},
+	// async deleteFolder(id){
+	// 	let request ={
+	// 		folderid: id
+	// 	}
+	// }
   },
   async created(){
 	await this.getFolders()

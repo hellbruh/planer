@@ -320,6 +320,23 @@ fastify.post('/folder', async function(request,reply) {
     reply.send(data)
 })
 
+
+
+// PDF
+fastify.post('/pdf', async function(request,reply) {
+
+    let data = {
+        message:'error'
+    }
+    try{
+        
+    }
+    catch(e){
+        console.log(e)
+    }
+    reply.send(data)
+})
+
 // Создание маршрута для post запроса
 fastify.post('/post',function (request, reply) {
     console.log(`Тело запроса: `,JSON.stringify(request.body))

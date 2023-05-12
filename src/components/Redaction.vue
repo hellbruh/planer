@@ -8,8 +8,8 @@
         <h2>{{folderName}}</h2>
         <div>
             <ul class="list-group" id="list">
-                <li class="list-group-item">Редактировать</li>
-                <li class="list-group-item">Удалить</li>
+                <li class="list-group-item" @click="redactFolder">Редактировать</li>
+                <li class="list-group-item" @click="deleteFolder">Удалить</li>
             </ul>
         </div>
     </div>
@@ -36,7 +36,9 @@ methods:{
     closeFunctools(){
         this.$emit('closeFunctools')
     },
-    
+    deleteFolder(id){
+        this.$emit('deleteFolder',id)
+    }
 }
 }
 </script>
