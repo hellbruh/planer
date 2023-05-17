@@ -13,7 +13,7 @@
 		<div 
 			class="folders" 
 			v-for="(folder) in folders"
-			:key=folder.id
+			:key=folder.folderid
 		>
 		<!-- пишем что хотим видеть у каждой папки в циле, папки=кнопки -->
 			<div class="folder">
@@ -25,7 +25,7 @@
 					</div>
 				</div>
 				<div>
-					<span class="material-symbols-outlined" id="moreButton" @click="functools(folder.folderName)">
+					<span class="material-symbols-outlined" id="moreButton" @click="functools(folder.folderid, folder.folderName)">
 						more_vert
 					</span>
 				</div>
@@ -42,7 +42,7 @@
       
       <!-- добавление папки -->
         <new-folder v-if="visibleForm===1" @addFolder="addNewFolder" @closeForm="closeForm" ></new-folder>
-		<redaction v-if="functoolsForm===1" @closeFunctools="closeFunctools" :folderName="activeFolderName" @deleteFolder="deleteFolder"></redaction>
+		<redaction v-if="functoolsForm===1" @closeFunctools="closeFunctools" :folderName="activeFolderName" :folderid="activeFolderid" @deleteFolder="deleteFolder(activeFolderid)"></redaction>
           
   </div>
 <!-- правая колонка с задачами -->
@@ -75,6 +75,7 @@ export default {
 		visibleForm:0,
 		functoolsForm: 0,
 		activeFolderName: '',
+		activeFolderid:0,
     }
   },
   methods:{
@@ -123,10 +124,36 @@ export default {
 		}
 	},
 	// открыть меню чтобы удалить или изменить папку
-	functools(id){
+	functools(id,name){
 		this.functoolsForm = 1
-		this.activeFolderName = id
+		this.activeFolderName = name
+		this.activeFolderid = id
 	},
+
+	//delete folder
+	async deleteFolder(id){
+		try{
+			let response = await this.$axios.post('http://127.0.0.1:3000/deletefolder',{
+				folderid:id
+			})
+			console.log(response)
+			let activeIndex = 'a'
+			for (let i=0; i<this.folders.length; i++){
+				if (this.folders[i].folderid==id){
+					activeIndex = i
+					break
+				}
+			}
+			this.folders.splice(activeIndex,1)
+
+			
+		}
+		catch(error){
+			console.error(error)
+		}
+		this.functoolsForm = 0
+	},
+
 	closeFunctools(){
 		this.functoolsForm = 0
 	},

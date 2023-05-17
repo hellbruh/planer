@@ -21,6 +21,9 @@ name:'NewFolder',
 props:{
     folderName:{
         type:String
+    },
+    folderid:{
+        type:String
     }
 },
 data(){

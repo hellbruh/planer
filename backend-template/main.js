@@ -166,7 +166,7 @@ fastify.post('/deletefolder', async function(request,reply) {
         message:'error'
     }
     try{
-        const result = await client.query(`delete from folders  where folderid = $1 order by folderid desc`, [request.body.id])
+        const result = await client.query(`delete from folders  where "folderid"= $1 `, [request.body.folderid])
         console.log('succesfully deleted')
         data. result = 'we have deleted it'
     }
