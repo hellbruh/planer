@@ -68,6 +68,20 @@ export default {
   data(){
     return{
       folders:[
+		// {folderColor:1,
+		// folderName:'folder 1',
+		// id:1
+		// },
+		// {folderColor:2,
+		// folderName:'folder 2',
+		// id:2
+		// },
+		// {folderColor:3,
+		// folderName:'folder 3',
+		// id:3
+		// },
+
+		// This is example!
 		],
     tasks:[
 
@@ -164,7 +178,7 @@ export default {
 	// }
   },
   async created(){
-	await this.getFolders()
+	// await this.getFolders()
   }
 }
 </script>
@@ -209,7 +223,7 @@ export default {
 
  #left-column{
 	width:250px;
-	height:100%;
+	height:100vh;
 	display:flex;
 	flex-direction:column;
 	align-items: flex-start;
